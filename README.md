@@ -6,13 +6,14 @@ execute a serie of calls to extract informations.
 
 #### Variables for winmap
 
-| env vars      | default value                                           | description                            |
-|--------------:|:-------------------------------------------------------:|:--------------------------------------:|
+| env vars      | default value                            | description                            |
+|--------------:|:----------------------------------------:|:--------------------------------------:|
 | MAPUSER       | localhost\\_winmap,domain\\Administrator | domain\user separated by "," if many   |
-| ES_SERVER     | 127.0.0.1                                               | Elasticsearch Server IP/DNS name       |   
-| ES_INDEX      | nmap	                                                  | Indice elasticsearch                   |
-| ES_INDEX_TYPE | nmap	                                                  | Type object inside index elasticsearch |
-| TENANT        | False                                                   | Netbox Tenant slug                     |
+| MAPPASSWORD   | password1,password2                      | Password of users in order. sep by "," |
+| ES_SERVER     | 127.0.0.1                                | Elasticsearch Server IP/DNS name       |
+| ES_INDEX      | nmap	                                   | Indice elasticsearch                   |
+| ES_INDEX_TYPE | nmap	                                   | Type object inside index elasticsearch |
+| TENANT        | False                                    | Netbox Tenant slug                     |
 
 Here one mapping of the final object:
 ```
