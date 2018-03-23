@@ -116,6 +116,12 @@ def get_acess(host):
     if true, call subproc_exec
     if false, save the fail status on elasticsearch
     """
+
+    result = {
+        'parsed': 3,
+        'err': 'not analyzed'
+    }
+    
     print(LISTMAPUSER)
     accessmode=False
     
@@ -150,22 +156,17 @@ def get_acess(host):
         listpass = listpass + 1
         
     if accessmode == True:
-        subproc_def(host, mapuser)
+        subproc_def(host, mapuser, result)
     else:
         result['parsed'] = 4
         result['err'] = "with out access"
             
     update_es(host['_id'], result)
         
-def subproc_exec(host, mapuser):
+def subproc_exec(host, mapuser, result):
     """
     in action
     """
-    result = {
-        'parsed': 3,
-        'err': 'not analyzed'
-    }
-    
     for k,v in wmic_commands.items():
         time.sleep(0.5)
 
