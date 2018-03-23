@@ -13,7 +13,7 @@ RUN set -ex; \
 
 RUN mkdir /opt/winmap
 COPY wmi_to_es.py /opt/winmap/wmi_to_es.py
-COPY requirements.txt /opt/winmap
+COPY requirements.txt /opt/winmap/requirements.txt
 WORKDIR /opt/winmap
 
 RUN set -ex; \
