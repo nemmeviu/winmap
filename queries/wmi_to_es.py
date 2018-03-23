@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import sys, time, os
+import sys, time, os, subprocess, sys, json, re
 from multiprocessing import Manager
 #from multiprocessing import Pool
 from multiprocessing.pool import ThreadPool
@@ -9,24 +9,30 @@ from threading import Thread, Lock
 from elasticsearch import Elasticsearch
 
 from subprocess import STDOUT, CalledProcessError, check_output as qx
-import subprocess, sys, json, re
+
 from datetime import datetime
 
 class EstadoNaoDeterminado(Exception):
     pass
 
-mapdomain  = os.getenv('DOMAIN', 'localhost')
-mapuser = os.getenv('MAPUSER', '_winmap')
+list_mapuser = os.getenv('MAPUSER', 'localhost\_winmap,domain\Administrator').split(',')
+list_mappass = os.getenv('MAPPASS', 'password1,password2').split(',')
+if len(list_mapuser) != len(list_mappass):
+    print('MAPUSER and MAPPASS dont have some size of values')
+    sys.exit(2)
+    
 es_server = os.getenv('ES_SERVER', '127.0.0.1')
 es_index = os.getenv('ES_INDEX', 'nmap')
 es_index_type = os.getenv('ES_INDEX_TYPE', 'nmap')
 
-
 es = Elasticsearch( hosts=[ es_server ])
-INDEX = 'nmap_v3'
-MAP_TYPE = 'windows'
+
 PROCS=10
-WMICPROCS=8
+try:
+    WMICPROCS = int(os.getenv('WMICPROCS', '8'))
+except:
+    print('WMICPROCS is a number')
+    sys.exit(2)
 
 wmic_commands = {
     'Win32_OperatingSystem': 'SELECT Caption,FreePhysicalMemory from Win32_OperatingSystem',
