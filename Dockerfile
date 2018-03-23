@@ -1,8 +1,8 @@
 FROM blacktourmaline/kali
 ENV PYTHONUNBUFFERED 1
+#	apt-get upgrade -y; \
 RUN set -ex; \
     	apt-get update; \
-	apt-get upgrade -y; \
 	apt-get remove -y wmis; \
 	apt-get -y install --no-install-recommends \
 	python3 wmi-client python3-pip \
