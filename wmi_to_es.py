@@ -110,6 +110,50 @@ def do_wmic():
         time.sleep(1)
 
 ### END MP
+
+def get_acess(host):
+    """
+    check access with host.
+    if true, call subproc_exec
+    if false, save the fail status on elasticsearch
+    """
+    print(LISTMAPUSER)
+    accessmode=False
+    
+    for x in LISTMAPUSER:
+        listpass = 0
+
+        mapuser = x + '%' + LISTMAPPASS[listpass]
+        wmictest = 'wmic -U "%s" //%s "%s"' % (
+            mapuser,
+            host['_source']['ip'],
+            '''SELECT Caption from Win32_OperatingSystem'''            
+        )
+        
+        subproc_CP = subprocess.run(
+            wmictest,
+            shell=True,
+            timeout=30,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+        if subproc_CP.returncode == 0:
+            print('sucess access')
+            accessmode=True
+            break
+        elif subproc_CP.returncode == 1:
+            if subproc_CP.returncode == 1:
+
+                DENIED=b'NTSTATUS: NT_STATUS_ACCESS_DENIED - Access denied\n'
+                if subproc_CP.stderr == DENIED:
+                    print('access denied!!!')
+
+        listpass = listpass + 1
+        
+    if accessmode == True:
+        print('done!')
+        # call subproc_def(host, mapuser)
+    
 def subproc_exec(host):
     """
     in action
@@ -127,6 +171,8 @@ def subproc_exec(host):
         for x in LISTMAPUSER:
             listpass = 0
             print(x)
+
+
 
             mapuser = x + '%' + LISTMAPPASS[listpass]
             v = 'wmic -U "%s" //%s "%s"' % (mapuser, host['_source']['ip'], v)
@@ -274,7 +320,8 @@ def main():
     while len(nets_shared_lists) > 0:
         nets = get_nets_and_clear()
         if len(nets) > 0:
-            pool.map(subproc_exec, nets)
+            pool.map(get_acess, nets)
+            #pool.map(subproc_exec, nets)
         time.sleep(1)
             
     shared_info['finalizar'] = True

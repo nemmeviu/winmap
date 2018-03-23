@@ -12,7 +12,7 @@ RUN set -ex; \
 	rm -rf /var/lib/apt/lists/* ;
 
 RUN mkdir /opt/winmap
-ADD queries /opt/winmap/queries
+COPY wmi_to_es.py /opt/winmap/wmi_to_es.py
 COPY requirements.txt /opt/winmap/queries
 WORKDIR /opt/winmap/queries
 
