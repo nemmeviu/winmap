@@ -43,14 +43,14 @@ except:
     sys.exit(2)
 
 wmic_commands = {
-    'Win32_OperatingSystem': 'SELECT Caption,FreePhysicalMemory from Win32_OperatingSystem',
-    'Win32_OperatingSystem_server': 'SELECT CSDVersion,CSName,ServicePackMajorVersion,LastBootUpTime from Win32_OperatingSystem',
-    'Win32_ComputerSystem': 'SELECT Model,Manufacturer,CurrentTimeZone,DaylightInEffect,EnableDaylightSavingsTime,NumberOfLogicalProcessors,NumberOfProcessors,Status,SystemType,ThermalState,TotalPhysicalMemory,UserName,Name from Win32_ComputerSystem',
-    'Win32_ComputerSystemProduct': 'SELECT IdentifyingNumber from Win32_ComputerSystemProduct',
-    'Win32_Processor': 'SELECT Family,LoadPercentage,Manufacturer,Name from Win32_Processor',
+    'Win32_OperatingSystem': '''SELECT Caption,FreePhysicalMemory from Win32_OperatingSystem''',
+    'Win32_OperatingSystem_server': '''SELECT CSDVersion,CSName,ServicePackMajorVersion,LastBootUpTime from Win32_OperatingSystem''',
+    'Win32_ComputerSystem': '''SELECT Model,Manufacturer,CurrentTimeZone,DaylightInEffect,EnableDaylightSavingsTime,NumberOfLogicalProcessors,NumberOfProcessors,Status,SystemType,ThermalState,TotalPhysicalMemory,UserName,Name from Win32_ComputerSystem''',
+    'Win32_ComputerSystemProduct': '''SELECT IdentifyingNumber from Win32_ComputerSystemProduct''',
+    'Win32_Processor': '''SELECT Family,LoadPercentage,Manufacturer,Name from Win32_Processor''',
     'Win32_Product': '''SELECT Name,Version from Win32_Product where Name='Symantec Endpoint Protection' ''',
-    'Win32_QuickFixEngineering': 'SELECT HotfixID from win32_QuickFixEngineering',
-    'Win32_NetworkAdapterConfiguration': 'SELECT IPAddress,MACAddress,TcpNumConnections,DHCPServer,ServiceName from Win32_NetworkAdapterConfiguration'
+    'Win32_QuickFixEngineering': '''SELECT HotfixID from win32_QuickFixEngineering''',
+    'Win32_NetworkAdapterConfiguration': '''SELECT IPAddress,MACAddress,TcpNumConnections,DHCPServer,ServiceName from Win32_NetworkAdapterConfiguration'''
 }
 
 wmic_rows = [
