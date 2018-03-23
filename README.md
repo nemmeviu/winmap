@@ -1,12 +1,21 @@
 # winmap
 
 Winmap is a module used in project [hostfootprint-netbox](https://github.com/nemmeviu/hostfootprint-netbox/).
-Winmap module search for windows hosts not parsed inside elasticsearch DB and
-execute a serie os calls to get many information.
+Winmap search for windows hosts inside elasticsearch DB and
+execute a serie of calls to extract informations.
+
+#### Variables for winmap
+
+| env vars      | default value                                           | description                            |
+|--------------:|:-------------------------------------------------------:|:--------------------------------------:|
+| MAPUSER       | localhost\_winmap,domain1\_winmap,domain2\Administrator | domain\user separated by "," if many   |
+| ES_SERVER     | 127.0.0.1                                               | Elasticsearch Server IP/DNS name       |   
+| ES_INDEX      | nmap	                                                  | Indice elasticsearch                   |
+| ES_INDEX_TYPE | nmap	                                                  | Type object inside index elasticsearch |
+| TENANT        | False                                                   | Netbox Tenant slug                     |
 
 Here one mapping of the final object:
 ```
-
 mapping = {
     "mappings": {
         index_type:{
@@ -223,25 +232,3 @@ mapping = {
 }
 
 ```
-
-
-
-Map networks based on Netbox IPAM Project.
-
-
-mapuser = os.getenv('MAPUSER')
-es_server = os.getenv('ELASTICSEARCH')
-country = os.getenv('COUNTRY')
-DOMAIN = os.getenv('DOMAIN')
-
-
-#### Variables for winmap
-
-| ENV Vars     | value default   | description                           |
-|--------------|:---------------:|:-------------------------------------:|
-| DOMAIN       | blacktourmaline | windows/samba Domain Name             |
-| MAPUSER      | _winmap         | User with permission on windows       |
-| ES_SERVER    | 127.0.0.1	 | Elasticsearch Server IP/DNS name      |
-| ES_INDEX     | nmap            | hostfootprint index name              |
-| TENANT       | sistemas        | netbox tenant slug                    |
-

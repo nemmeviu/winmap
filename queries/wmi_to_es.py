@@ -15,10 +15,12 @@ from datetime import datetime
 class EstadoNaoDeterminado(Exception):
     pass
 
-mapuser = os.getenv('MAPUSER')
-es_server = os.getenv('ELASTICSEARCH')
-country = os.getenv('COUNTRY')
-DOMAIN = os.getenv('DOMAIN')
+mapdomain  = os.getenv('DOMAIN', 'localhost')
+mapuser = os.getenv('MAPUSER', '_winmap')
+es_server = os.getenv('ES_SERVER', '127.0.0.1')
+es_index = os.getenv('ES_INDEX', 'nmap')
+es_index_type = os.getenv('ES_INDEX_TYPE', 'nmap')
+
 
 es = Elasticsearch( hosts=[ es_server ])
 INDEX = 'nmap_v3'
