@@ -156,7 +156,7 @@ def get_acess(host):
         listpass = listpass + 1
         
     if accessmode == True:
-        subproc_def(host, mapuser, result)
+        subproc_exec(host, mapuser, result)
     else:
         result['parsed'] = 4
         result['err'] = "with out access"
