@@ -4,7 +4,7 @@ ENV PYTHONUNBUFFERED 1
 RUN set -ex; \
     	apt-get update; \
 	apt-get remove -y wmis; \
-	apt-get -y install --no-install-recommends \
+	apt-get -y install --no-install-recommends --allow-unauthenticated \
 	python3 wmi-client python3-pip \
 	python3-setuptools \
 	screen \
