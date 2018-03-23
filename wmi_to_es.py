@@ -106,11 +106,10 @@ def do_wmic():
     while not shared_info['finalizar'] or len(hosts_shared_lists) > 0:
         hosts_args = get_hosts_and_clear()
         if len(hosts_args) > 0:
-            pool.map(subproc_exec, hosts_args )
+            pool.map(subproc_exec, hosts_args)
         time.sleep(1)
 
 ### END MP
-
 def get_acess(host):
     """
     check access with host.
@@ -151,10 +150,14 @@ def get_acess(host):
         listpass = listpass + 1
         
     if accessmode == True:
-        print('done!')
-        # call subproc_def(host, mapuser)
-    
-def subproc_exec(host):
+        subproc_def(host, mapuser)
+    else:
+        result['parsed'] = 4
+        result['err'] = "with out access"
+            
+    update_es(host['_id'], result)
+        
+def subproc_exec(host, mapuser):
     """
     in action
     """
@@ -166,19 +169,7 @@ def subproc_exec(host):
     for k,v in wmic_commands.items():
         time.sleep(0.5)
 
-        #
-        print(LISTMAPUSER)
-        for x in LISTMAPUSER:
-            listpass = 0
-            print(x)
-
-
-
-            mapuser = x + '%' + LISTMAPPASS[listpass]
-            v = 'wmic -U "%s" //%s "%s"' % (mapuser, host['_source']['ip'], v)
-
-            listpass = listpass + 1
-
+        v = 'wmic -U "%s" //%s "%s"' % (mapuser, host['_source']['ip'], v)
         try:
 
             l_subproc = subprocess.check_output(v, shell=True, timeout=100)
@@ -226,7 +217,6 @@ def subproc_exec(host):
         except subprocess.CalledProcessError as time_err:
             result['parsed'] = time_err.returncode
             result['err'] = "%s - %s" % (str(time_err.output), str(time_err.stderr) )
-
 
         except subprocess.TimeoutExpired as timeout:
             result['parsed'] = 1
