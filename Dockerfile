@@ -14,7 +14,7 @@ RUN set -ex; \
 RUN mkdir /opt/winmap
 COPY wmi_to_es.py /opt/winmap/wmi_to_es.py
 COPY requirements.txt /opt/winmap/queries
-WORKDIR /opt/winmap/queries
+WORKDIR /opt/winmap
 
 RUN set -ex; \
 	pip3 install -r requirements.txt
