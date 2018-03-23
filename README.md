@@ -14,6 +14,7 @@ execute a serie of calls to extract informations.
 | ES_INDEX      | nmap	                                   | Indice elasticsearch                   |
 | ES_INDEX_TYPE | nmap	                                   | Type object inside index elasticsearch |
 | TENANT        | False                                    | Netbox Tenant slug                     |
+| COUNTRY       | False                                    | Netbox Country Name (Region Father)    |
 | WMICPROCS     | 8                                        | Number of wmic procs		    |
 
 

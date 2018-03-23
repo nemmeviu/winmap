@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import sys, time, os, subprocess, sys, json, re
+import sys, time, os, subprocess, sys, json, re, datetime
 from multiprocessing import Manager
 #from multiprocessing import Pool
 from multiprocessing.pool import ThreadPool
@@ -10,24 +10,32 @@ from elasticsearch import Elasticsearch
 
 from subprocess import STDOUT, CalledProcessError, check_output as qx
 
-from datetime import datetime
-
 class EstadoNaoDeterminado(Exception):
     pass
 
-list_mapuser = os.getenv('MAPUSER', 'localhost\_winmap,domain\Administrator').split(',')
-list_mappass = os.getenv('MAPPASS', 'password1,password2').split(',')
-if len(list_mapuser) != len(list_mappass):
+LISTMAPUSER = os.getenv('MAPUSER', 'localhost\_winmap,domain\Administrator').split(',')
+LISTMAPPASS = os.getenv('MAPPASS', 'password1,password2').split(',')
+if len(LISTMAPUSER) != len(LISTMAPPASS):
     print('MAPUSER and MAPPASS dont have some size of values')
     sys.exit(2)
-    
-es_server = os.getenv('ES_SERVER', '127.0.0.1')
-es_index = os.getenv('ES_INDEX', 'nmap')
-es_index_type = os.getenv('ES_INDEX_TYPE', 'nmap')
+COUNTRY = os.getenv('COUNTRY', '')
+TENANT = os.getenv('TENANT', '')  
+ES_SERVER = os.getenv('ES_SERVER', '127.0.0.1')
 
-es = Elasticsearch( hosts=[ es_server ])
+ES_INDEX = os.getenv('ES_INDEX', 'nmap')
+d = datetime.date.today()
+ES_INDEX = ES_INDEX + '-' + d.strftime('%m%Y')
 
-PROCS=10
+ES_INDEX_TYPE = os.getenv('ES_INDEX_TYPE', 'nmap')
+MAP_TYPE = 'windows'
+
+if (COUNTRY == '' and TENANT == ''):
+    print('Please, create COUNTRY or TENANT env variable')
+    sys.exit(2)
+
+es = Elasticsearch( hosts=[ ES_SERVER ])
+
+PROCS=1
 try:
     WMICPROCS = int(os.getenv('WMICPROCS', '8'))
 except:
@@ -114,8 +122,19 @@ def subproc_exec(host):
     for k,v in wmic_commands.items():
         time.sleep(0.5)
 
-        try:
+        #
+        print(LISTMAPUSER)
+        for x in LISTMAPUSER:
+            listpass = 0
+            print(x)
+
+            mapuser = x + '%' + LISTMAPPASS[listpass]
             v = 'wmic -U "%s" //%s "%s"' % (mapuser, host['_source']['ip'], v)
+
+            listpass = listpass + 1
+
+        try:
+
             l_subproc = subprocess.check_output(v, shell=True, timeout=100)
 
             result['parsed'] = 0
@@ -184,8 +203,8 @@ def update_es(_id, result):
 
     try:
         response = es.update(
-            index=INDEX,
-            doc_type=INDEX,
+            index=ES_INDEX,
+            doc_type=ES_INDEX_TYPE,
             id=_id,
             body=body
         )
@@ -193,29 +212,41 @@ def update_es(_id, result):
     except:
         print("fail: %s" % _id)
 
-def get_ip(country):
-    PAIS = country
+def get_ip():
+
+    LIST_TERMS = [
+        { "exists": { "field": "ip" } },
+        { "term": { "map_type": MAP_TYPE } }        
+    ]
+    
+    if COUNTRY != '':
+        LIST_TERMS.append(
+            { "term": { "g_country": COUNTRY } }
+        )
+    if TENANT != '':
+        LIST_TERMS.append(
+            { "term": { "g_flag": TENANT } }
+        )
+
     body = {
         "sort" : [
-            { "created_at" : {"order" : "desc"}},
+            { "g_last_mod_date" : {"order" : "desc"}},
         ],
         "query": {
             "bool": {
                 "must_not": {
                     "exists": { "field": "parsed" }
                 },
-                "must": [
-                    { "exists": { "field": "ip" } },
-                    { "term": { "country": PAIS } },
-                    { "term": { "map_type": MAP_TYPE } },
-                ],
+                "must": LIST_TERMS
             }
         }
     }
 
+    print(body)
+
     res = es.search(
-        index=INDEX,
-        doc_type=INDEX,
+        index=ES_INDEX,
+        doc_type=ES_INDEX_TYPE,
         body=body,
         size=200,
     )
@@ -230,7 +261,7 @@ def main():
     shared_info['finalizar'] = False
 
     # query elasticsearch
-    ips = get_ip(country)
+    ips = get_ip()
     print(len(ips))
 
     for host in ips:
