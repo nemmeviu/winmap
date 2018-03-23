@@ -13,7 +13,7 @@ from subprocess import STDOUT, CalledProcessError, check_output as qx
 class EstadoNaoDeterminado(Exception):
     pass
 
-LISTMAPUSER = os.getenv('MAPUSER', 'localhost\_winmap,domain\Administrator').split(',')
+LISTMAPUSER = os.getenv('MAPUSER', 'localhost/_winmap,domain/Administrator').split(',')
 LISTMAPPASS = os.getenv('MAPPASS', 'password1,password2').split(',')
 if len(LISTMAPUSER) != len(LISTMAPPASS):
     print('MAPUSER and MAPPASS dont have some size of values')
