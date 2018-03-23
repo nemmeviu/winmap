@@ -238,16 +238,17 @@ def update_es(_id, result):
         "doc": result
     }
 
-    try:
-        response = es.update(
-            index=ES_INDEX,
-            doc_type=ES_INDEX_TYPE,
-            id=_id,
-            body=body
-        )
-        print(response)
-    except:
-        print("fail: %s" % _id)
+    print(body)
+    #try:
+    response = es.update(
+        index=ES_INDEX,
+        doc_type=ES_INDEX_TYPE,
+        id=_id,
+        body=body
+    )
+    print(response)
+    #except:
+    #    print("fail: %s" % _id)
 
 def get_ip():
 
