@@ -231,6 +231,19 @@ def subproc_exec(host, mapuser, result):
 
 ###############
 def update_es(_id, result):
+
+    # fix ES error by boolean
+    if 'DaylightInEffect' in result.keys():
+        if result['DaylightInEffect'] == 'True':
+            result['DaylightInEffect'] = True
+        else:
+            result['DaylightInEffect'] = False
+
+    if 'EnableDaylightSavingsTime' in result.keys():            
+        if result['EnableDaylightSavingsTime'] == 'True':
+            result['EnableDaylightSavingsTime'] = True
+        else:
+            result['EnableDaylightSavingsTime'] = False            
     
     _id = _id
     # :-)
