@@ -15,7 +15,8 @@ execute a serie of calls to extract informations.
 | ES_INDEX_TYPE | nmap	                                   | Type object inside index elasticsearch |
 | TENANT        | False                                    | Netbox Tenant slug                     |
 | COUNTRY       | False                                    | Netbox Country Name (Region Father)    |
-| WMICPROCS     | 8                                        | Number of wmic procs		    |
+| WMICPROCS     | 10                                       | Number of threads wmic in some time    |
+| PROCS         | 10                                       | Number of hosts mappeds in some time   |
 
 
 Here one mapping of the final object:

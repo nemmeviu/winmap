@@ -35,9 +35,9 @@ if (COUNTRY == '' and TENANT == ''):
 
 es = Elasticsearch( hosts=[ ES_SERVER ])
 
-PROCS=1
+PROCS = int(os.getenv('PROCS', '10'))
 try:
-    WMICPROCS = int(os.getenv('WMICPROCS', '8'))
+    WMICPROCS = int(os.getenv('WMICPROCS', '10'))
 except:
     print('WMICPROCS is a number')
     sys.exit(2)
