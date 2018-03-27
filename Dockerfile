@@ -12,9 +12,13 @@ RUN set -ex; \
 	rm -rf /var/lib/apt/lists/* ;
 
 RUN mkdir /opt/winmap
-COPY wmi_to_es.py /opt/winmap/wmi_to_es.py
-COPY requirements.txt /opt/winmap/requirements.txt
 WORKDIR /opt/winmap
+
+COPY requirements.txt /opt/winmap/requirements.txt
 
 RUN set -ex; \
 	pip3 install -r requirements.txt
+
+COPY wmi_to_es.py /opt/winmap/wmi_to_es.py
+
+
