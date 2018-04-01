@@ -22,9 +22,8 @@ COUNTRY = os.getenv('COUNTRY', '')
 TENANT = os.getenv('TENANT', '')  
 ES_SERVER = os.getenv('ES_SERVER', '127.0.0.1')
 
-ES_INDEX = os.getenv('ES_INDEX', 'nmap')
+ES_INDEX = os.getenv('ES_INDEX', 'nmap-*')
 d = datetime.date.today()
-ES_INDEX = ES_INDEX + '-' + d.strftime('%m%Y')
 
 ES_INDEX_TYPE = os.getenv('ES_INDEX_TYPE', 'nmap')
 MAP_TYPE = 'windows'
