@@ -137,7 +137,7 @@ def get_acess(host):
         subproc_CP = subprocess.run(
             wmictest,
             shell=True,
-            timeout=30,
+            timeout=60,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
