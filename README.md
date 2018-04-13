@@ -8,7 +8,7 @@ execute a serie of calls to extract informations.
 
 | env vars      | default value                            | description                            |
 |--------------:|:----------------------------------------:|:--------------------------------------:|
-| MAPUSER       | localhost/_winmap,domain/Administrator   | domain\user separated by "," if many   |
+| MAPUSER       | localhost\_winmap,domain\Administrator   | domain\user separated by "," if many   |
 | MAPPASS       | password1,password2                      | Password of users in order. sep by "," |
 | ES_SERVER     | 127.0.0.1                                | Elasticsearch Server IP/DNS name       |
 | ES_INDEX      | nmap	                                   | Indice elasticsearch                   |
@@ -17,6 +17,7 @@ execute a serie of calls to extract informations.
 | COUNTRY       | False                                    | Netbox Country Name (Region Father)    |
 | WMICPROCS     | 10                                       | Number of threads wmic in some time    |
 | PROCS         | 10                                       | Number of hosts mappeds in some time   |
+| TIMEOUT       | 180					   | Whait Timeout in seconds	     	    |
 
 
 Here one mapping of the final object:

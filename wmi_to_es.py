@@ -22,11 +22,15 @@ COUNTRY = os.getenv('COUNTRY', '')
 TENANT = os.getenv('TENANT', '')  
 ES_SERVER = os.getenv('ES_SERVER', '127.0.0.1')
 
-ES_INDEX = os.getenv('ES_INDEX', 'nmap-*')
+index = os.getenv('ES_INDEX', 'nmap')
 d = datetime.date.today()
+ES_INDEX_SEARCH = index + '-*'
+ES_INDEX_UPDATE = index + '-' + d.strftime('%m%Y')
 
 ES_INDEX_TYPE = os.getenv('ES_INDEX_TYPE', 'nmap')
 MAP_TYPE = 'windows'
+
+TIMEOUT = int(os.getenv('TIMEOUT', '180'))
 
 if (COUNTRY == '' and TENANT == ''):
     print('Please, create COUNTRY or TENANT env variable')
@@ -46,8 +50,8 @@ wmic_commands = {
     'Win32_OperatingSystem_server': '''SELECT CSDVersion,CSName,ServicePackMajorVersion,LastBootUpTime from Win32_OperatingSystem''',
     'Win32_ComputerSystem': '''SELECT Model,Manufacturer,CurrentTimeZone,DaylightInEffect,EnableDaylightSavingsTime,NumberOfLogicalProcessors,NumberOfProcessors,Status,SystemType,ThermalState,TotalPhysicalMemory,UserName,Name from Win32_ComputerSystem''',
     'Win32_ComputerSystemProduct': '''SELECT IdentifyingNumber from Win32_ComputerSystemProduct''',
-    'Win32_Processor': '''SELECT Family,LoadPercentage,Manufacturer,Name from Win32_Processor''',
-    'Win32_Product': '''SELECT Name,Version from Win32_Product where Name='Symantec Endpoint Protection' ''',
+    'Win32_Processor': '''SELECT Name from Win32_Processor''',
+    'Win32_Product': '''SELECT Name,Version from Win32_Product''',
     'Win32_QuickFixEngineering': '''SELECT HotfixID from win32_QuickFixEngineering''',
     'Win32_NetworkAdapterConfiguration': '''SELECT IPAddress,MACAddress,TcpNumConnections,DHCPServer,ServiceName from Win32_NetworkAdapterConfiguration'''
 }
@@ -78,8 +82,8 @@ wmic_rows = [
     'CSName',
     'ServicePackMajorVersion',
     'LastBootUpTime',
-    'Name_AV',
-    'Version_AV',
+    'Product_Name',
+    'Product_Version',
     'HotFixID',
     'IPAddress',
     'MACAddress',
@@ -110,11 +114,11 @@ def do_wmic():
 
 ### END MP
 def get_acess(host):
-    """
-    check access with host.
-    if true, call subproc_exec
-    if false, save the fail status on elasticsearch
-    """
+    '''
+    check access in host.
+    - if true, call subproc_exec
+    - if false, save the fail status on elasticsearch
+    '''
 
     result = {
         'parsed': 3,
@@ -137,7 +141,7 @@ def get_acess(host):
         subproc_CP = subprocess.run(
             wmictest,
             shell=True,
-            timeout=30,
+            timeout=TIMEOUT,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
@@ -172,29 +176,44 @@ def subproc_exec(host, mapuser, result):
         v = 'wmic -U "%s" //%s "%s"' % (mapuser, host['_source']['ip'], v)
         try:
 
-            l_subproc = subprocess.check_output(v, shell=True, timeout=100)
+            l_subproc = subprocess.check_output(v, shell=True, timeout=TIMEOUT)
 
             result['parsed'] = 0
             result['err'] = "analized"
-
-            line = l_subproc.decode().split('\n')
-
+        
+            line = l_subproc.decode('utf-8', 'ignore').split('\n')
+        
             # replace hostname
             if 'Win32_ComputerSystem' in line[0] and 'Win32_ComputerSystemProduct' not in line[0]:
                 if '|Name' in line[1]:
                     line[1] = line[1].replace('|Name','|CSName')
             
-            # replace AV Information
+            # Get all Products inside Windows 
             if 'Win32_Product' in line[0]:
-                line[1] = line[1].replace('Name','Name_AV')
-                line[1] = line[1].replace('Version','Version_AV')
+                header = 'Product_Name'
+                result[header] = []
+                #line[1] = line[1].replace('Name','Product_Name')
+                #line[1] = line[1].replace('Version','Product_Version')
+                for product_new in line[2:-1]:
+                    product_new = product_new.split('|')
+                    product_final = (str(product_new[1])  + '=' + str(product_new[2]))
+                    result[header].append(product_final)
+                #print(result[header])
+                #print(product_final)
+
+                #build list Product_name in a Array_list
+                #for product_member in line[2:-1]:
+                # print(product_member)
+                # product_member = product_member.replace('|','=')
+                # result[header].append(product_member)
+
 
             # replace procinfo 
             if 'Win32_Processor' in line[0]:
-                line[1] = line[1].replace('Family','ProcFamily')
-                line[1] = line[1].replace('LoadPercentage','ProcLoadPercentage')
-                line[1] = line[1].replace('Manufacturer','ProcManufacturer')
-                line[1] = line[1].replace('Name','ProcName')
+                result['ProcName'] = []
+                
+                proc_name = line[2].split('|')
+                result['ProcName'].append(proc_name[1])
 
             if k == 'Win32_QuickFixEngineering':
                 header = 'HotFixID'
@@ -252,7 +271,7 @@ def update_es(_id, result):
 
     try:
         response = es.update(
-            index=ES_INDEX,
+            index=ES_INDEX_UPDATE,
             doc_type=ES_INDEX_TYPE,
             id=_id,
             body=body
@@ -291,7 +310,7 @@ def get_ip():
     }
 
     res = es.search(
-        index=ES_INDEX,
+        index=ES_INDEX_SEARCH,
         doc_type=ES_INDEX_TYPE,
         body=body,
         size=200,
