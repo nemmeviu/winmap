@@ -30,7 +30,7 @@ ES_INDEX_UPDATE = index + '-' + d.strftime('%m%Y')
 ES_INDEX_TYPE = os.getenv('ES_INDEX_TYPE', 'nmap')
 MAP_TYPE = 'windows'
 
-TIMEOUT = os.getenv(int('TIMEOUT'), 180)
+TIMEOUT = int(os.getenv('TIMEOUT', '180'))
 
 if (COUNTRY == '' and TENANT == ''):
     print('Please, create COUNTRY or TENANT env variable')
