@@ -128,9 +128,8 @@ def get_acess(host):
     print(LISTMAPUSER)
     accessmode=False
     
+    listpass = 0    
     for x in LISTMAPUSER:
-        listpass = 0
-
         mapuser = x + '%' + LISTMAPPASS[listpass]
         wmictest = 'wmic -U "%s" //%s "%s"' % (
             mapuser,
