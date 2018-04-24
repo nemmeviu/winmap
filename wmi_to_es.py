@@ -19,7 +19,11 @@ if len(LISTMAPUSER) != len(LISTMAPPASS):
     print('MAPUSER and MAPPASS dont have some size of values')
     sys.exit(2)
 COUNTRY = os.getenv('COUNTRY', '')
-TENANT = os.getenv('TENANT', '')  
+TENANT = os.getenv('TENANT', '')
+DMZ = os.getenv('DMZ', '')
+
+ES_SIZE_QUERY = int(os.getenv('ES_SIZE_QUERY', '10'))
+
 ES_SERVER = os.getenv('ES_SERVER', '127.0.0.1')
 
 index = os.getenv('ES_INDEX', 'nmap')
@@ -293,6 +297,10 @@ def get_ip():
         LIST_TERMS.append(
             { "term": { "g_flag": TENANT } }
         )
+    if DMZ != '':
+        LIST_TERMS.append(
+            { "term": { "role": DMZ } }
+        )
 
     body = {
         "sort" : [
@@ -312,7 +320,7 @@ def get_ip():
         index=ES_INDEX_SEARCH,
         doc_type=ES_INDEX_TYPE,
         body=body,
-        size=200,
+        size=ES_SIZE_QUERY,
     )
 
     ips = []
