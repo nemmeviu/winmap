@@ -19,7 +19,7 @@ execute a serie of calls to extract informations.
 | PROCS         | 10                                       | Number of hosts mappeds in some time   |
 | TIMEOUT       | 180					   | Whait Timeout in seconds	     	    |
 | ES_SIZE_QUERY | 10					   | Default Elasticsearch hosts query size |
-
+| ROLE          | False                                    | Netbox Role name                       |
 
 Here one mapping of the final object:
 ```
