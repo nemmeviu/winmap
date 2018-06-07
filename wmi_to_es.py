@@ -20,6 +20,7 @@ if len(LISTMAPUSER) != len(LISTMAPPASS):
     sys.exit(2)
 COUNTRY = os.getenv('COUNTRY', '')
 TENANT = os.getenv('TENANT', '')
+ROLE = os.getenv('ROLE', '')
 
 ES_SIZE_QUERY = int(os.getenv('ES_SIZE_QUERY', '10'))
 
@@ -295,6 +296,10 @@ def get_ip():
     if TENANT != '':
         LIST_TERMS.append(
             { "term": { "g_flag": TENANT } }
+        )
+    if ROLE != '':
+        LIST_TERMS.append(
+            { "term": { "role": ROLE } }
         )
 
     body = {
