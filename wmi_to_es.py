@@ -32,7 +32,7 @@ ES_INDEX_SEARCH = index + '-*'
 ES_INDEX_UPDATE = index + '-' + d.strftime('%m%Y')
 
 ES_INDEX_TYPE = os.getenv('ES_INDEX_TYPE', 'nmap')
-MAP_TYPE = 'windows'
+MAP_TYPE = os.getenv('MAP_TYPE', 'wintel')
 
 TIMEOUT = int(os.getenv('TIMEOUT', '180'))
 
